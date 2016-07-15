@@ -595,7 +595,7 @@
 
 function percentHeight() {
 
-  var elm = document.getElementById('coaching-embed-cir');
+  var elm = document.getElementById('welfareScatterplotContainer');
 
   // get actual height of el
   var elHeight = elm.scrollHeight;
@@ -611,6 +611,6 @@ function percentHeight() {
   return distanceTraveled >= (elHeight * 0.50);
 }
 
-var pymParent = new pym.Parent('coaching-embed-cir',
+var pymParent = new pym.Parent('welfareScatterplotContainer',
   'https://jieqianzhang.github.io/welfare_reform_final_test/index.html', {}
 );
