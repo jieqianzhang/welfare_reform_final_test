@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="jquery-ui.css">
+    <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,800' rel='stylesheet' type='text/css'>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div id="intro">
+        <h2>How each state has spent their TANF money since welfare reform</h2>
+        <h5>By Jieqian Zhang</h5>
+        <h5>Two decades after the new welfare reform, 45 states are spending less share of welfare money on basic assistance, like  cash welfare, child care and work-related assistance, to help poor families out of difficulites. Meanwhile, most of the states have more families with children living under poverty line every one hundred families. </h5>
+        <h5>Select a state and click play button, to see how the poverty rate and amount of basic assistance has changed since 1997.</h5>
+    </div>
+    <div>
+        <div id="dropdown_div"></div>
+        <div id="play_button"></div>
+    </div>
+    <div id="slider_container">
+        <input type="text" id="year" readonly style="border:0; color:#f6931f; font-weight:bold;">
+        <div id="slider"></div>
+    </div>
+    <div id="graphic_container"></div>
+    <div id="footnote">
+        <h6>Data: Census' Current Population Survey data and the Department of Health and Human Services(HSS) data, analysed by Center on Budget and Policy Priorities(CBPP)</h6>
+        <h6>Note: CBPP uses two-year averages of the families in poverty data to improve the reliability of the data at state level. The family poverty data is the two-year averages of the current year and the previous year.</h6>
+    </div>
+    <script src="//d3js.org/d3.v3.min.js"></script>
+    <script src="swoopy-drag.js"></script>
+    <script src="jquery-ui.js"></script>
+    <script>
+    // ************* call slider *******************
+    // var slider = d3.slider().min(1997).max(2014).tickValues([]).stepValues([1997, 1998, 1999, 2000, 2001, 2002, 1997, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014]);
+    // d3.select('#slider').call(slider);
+    </script>
+    <script>
+    var windowWidth = $(document).width()
+    var margin = {
+            top: 20,
+            right: 20,
+            bottom: 30,
+            left: 60
+        },
+        width = windowWidth - margin.left - margin.right,
+        height = 500 - margin.top - margin.bottom;
+
+    var x = d3.scale.linear()
+        .range([0, width]);
+
+    var y = d3.scale.linear()
+        .range([height, 0]);
+
+
+    var color = d3.scale.linear()
+        .range([255, 0]);
+
+    var formatPercentage = d3.format(".00%");
+
+    var xAxis = d3.svg.axis()
+        .scale(x)
+        .orient("bottom")
+        .tickFormat(function(d) {
+            return Math.floor(d * 100)
+        })
+        .tickSize(-height);
+
+    var yAxis = d3.svg.axis()
+        .scale(y)
+        .orient("left")
+        .tickFormat(formatPercentage)
+        .tickSize(-width);
+
+    var xAxis_zero = d3.svg.axis()
+        .scale(x)
+        .orient("bottom")
+        .ticks(0)
+        .tickSize(0);
+
+    var yAxis_zero = d3.svg.axis()
+        .scale(y)
+        .orient("left")
+        .ticks(0)
+        .tickSize(0);
+
+    var graphic = d3.select("#graphic_container").append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        // .call(responsivefy)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+        .attr("id", "scatterplot");
+
+
+    d3.csv("poverty_core_final.csv", function(error, dataAll) {
+
+        if (error) throw error;
+
+        var data = dataAll.filter(function(d, i) {
+            if (d.year === "1997") {
+                return d;
+            }
+        });
+
+        var data = data.map(function(d) {
+            return {
+                state: d.state,
+                year: d.year,
+                core: +d.core,
+                poor: +d.poor
+            };
+        });
+
+        data = d3.nest().key(function(d) {
+            return d.year;
+        }).entries(data);
+
+        // ********** add drop down menu **********
+
+
+
+        var dropDown = d3.select("#dropdown_div").append("select")
+            .attr("name", "candidate-list")
+            .style("position", "absolute")
+            .attr("id", "dropdown")
+            .attr("class", "dropdown-toggle");
+
+        var options = dropDown.selectAll("option")
+            .data(data[0].values)
+            .enter()
+            .append("option")
+            .attr("value", function(d) {
+                return d.state;
+            })
+            .attr("selected", function(d) {
+                return d.state === "Oklahoma"
+            })
+            .text(function(d) {
+                return d.state;
+            });
+
+        dropDown.on("change", menuChanged)
+
+
+
+
+
+        // set a fixed x-y axis domain
+        x.domain([0, 0.3])
+        y.domain([0, 1.09])
+
+
+        // color.domain([d3.min(data, function(d) {
+        //     return -d.core
+        // }), 1])
+
+
+
+
+
+        graphic.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis)
+            .append("text")
+            .attr("id", "xlabel")
+            .attr("x", x(0.3))
+            .attr("y", 23)
+            .style("text-anchor", "end")
+            .text("Families with kids in poverty per one hundred families with kids")
+            .style("font-size", 12)
+            .style("font-weight", 400)
+
+        graphic.append("g")
+            .attr("class", "y axis")
+            .call(yAxis)
+            .append("text")
+            // .attr("class", "xlabel")
+            .attr("transform", "rotate(-90)")
+            .attr("y", -35)
+            .attr("x", 0)
+            .style("text-anchor", "end")
+            .text("Percentage of core spending among total TANF spending")
+            .style("font-size", 12)
+            .style("font-weight", 400)
+
+
+
+
+        // ************* background annotations *************
+
+
+        var annotations_bk = [{
+            "xVal": 0.3,
+            "yVal": 0,
+            "path": "",
+            "text": "More poor families",
+            "textOffset": [-159, -27]
+        }, {
+            "xVal": 0.3,
+            "yVal": 0,
+            "path": "M-161,-104L-133,-81",
+            "text": "Less basic assistance",
+            "textOffset": [-174, -7]
+        }, {
+            "xVal": 0,
+            "yVal": 1.09,
+            "path": "M158,104L130,83",
+            "text": "Fewer poor families",
+            "textOffset": [5, 21]
+        }, {
+            "xVal": 0,
+            "yVal": 1.09,
+            "path": "",
+            "text": "More basic assistance",
+            "textOffset": [5, 43]
+        }]
+
+        var swoopy_bk = d3.swoopyDrag()
+            .x(function(d) {
+                return x(d.xVal)
+            })
+            .y(function(d) {
+                return y(d.yVal)
+            })
+            // .draggable(true)
+            .annotations(annotations_bk)
+
+        graphic.append('marker')
+            .attr('id', 'arrow')
+            .attr('viewBox', '-10 -10 20 20')
+            .attr('markerWidth', 10)
+            .attr('markerHeight', 10)
+            .attr('orient', 'auto')
+            .append('path')
+            .attr('d', 'M-6.75,-6.75 L 0,0 L -6.75,6.75')
+
+        var swoopySel_bk = graphic.append('g').call(swoopy_bk)
+            .attr("class", "annotations_bk")
+
+        swoopySel_bk.selectAll('path').attr('marker-end', 'url(#arrow)')
+
+        // ************** end of bk annotations **********
+
+        // ************** add rect below national **********
+
+        graphic.append("rect")
+            .datum(dataAll.filter(function(d, i) {
+                if (d.state === "National" & d.year === "1997") {
+                    return d;
+                }
+            }))
+            .attr("x", function(d) {
+                return x(d[0].poor)
+            })
+            .attr("y", function(d) {
+                return y(d[0].core)
+            })
+            .attr("width", function(d) {
+                return x(0.3) - x(d[0].poor)
+            })
+            .attr("height", function(d) {
+                return y(1.09 - d[0].core)
+            })
+            .attr("id", "below_national")
+            .attr('fill', 'url(#diagonalHatch)')
+            .style("opacity", 0.5);
+
+        // Add annotation to the rect
+
+        graphic.append("rect")
+            .attr("x", 0)
+            .attr("y", -20)
+            .attr("width", 15)
+            .attr("height", 15)
+            // .attr("id", "below_national")
+            .attr('fill', 'url(#diagonalHatch)')
+            .style("opacity", 0.5);
+
+        graphic.append("text")
+            .attr("x", 20)
+            .attr("y", -8)
+            .text("States inside the shaded area are worse than the nationwide level")
+            .attr("text-anchor", "start")
+            .style("fill", "black")
+            .style("font-size", 12)
+            .style("font-weight", 400)
+
+
+
+        graphic.append('defs')
+            .append('pattern')
+            .attr('id', 'diagonalHatch')
+            .attr('patternUnits', 'userSpaceOnUse')
+            .attr('width', 4)
+            .attr('height', 4)
+            .append('path')
+            .attr('d', 'M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2')
+            .attr('stroke', 'grey')
+            .attr('stroke-width', 1);
+
+        // ******************** add circles for each state **************
+
+        var dot = graphic.selectAll(".dot")
+            .data(data[0].values)
+            .enter().append("circle")
+            .attr("class", "dot")
+            .attr("r", 10)
+            .attr("cx", function(d) {
+                return x(d.poor);
+            })
+            .attr("cy", function(d) {
+                return y(d.core);
+            })
+            .style("opacity", .8)
+            .style("stroke", function(d) {
+                if (d.state === "National") {
+                    // if (d.state === "National" || d.state === "Oklahoma" || d.state === "Michigan" || d.state === "Indiana") {
+                    return "black"
+                } else {
+                    return "lightgrey"
+                }
+            })
+            .style("stroke-width", function(d) {
+                if (d.state === "National") {
+                    // if (d.state === "National" || d.state === "Oklahoma" || d.state === "Michigan" || d.state === "Indiana") {
+                    return 2
+                } else {
+                    return 0.5
+                }
+            })
+            .attr("fill", function(d) {
+                if (d.state === "National") {
+                    return "black"
+                } else {
+                    return "#FF715B"
+                }
+
+            })
+
+
+        dot.style("cursor", "pointer")
+            .on("mouseover", function(d) {
+
+                if (windowWidth > 420) {
+
+                    state.filter(function(text) {
+                        return text.state === d.state;
+                    }).attr("display", "unset")
+
+
+                    dot.filter(function(circle) {
+                        return circle.state === d.state;
+                    }).style("stroke", "black").style("stroke-width", 2)
+
+                }
+            })
+
+
+        .on("mouseout", function(d) {
+            state.attr("display", function(d) {
+                if (d.state === "National") {
+                    // if (d.state === "National" || d.state === "Oklahoma" || d.state === "Michigan" || d.state === "Indiana") {
+                    return "unset"
+                } else {
+                    return "none"
+                }
+            })
+            dot.style("stroke", function(d) {
+                    if (d.state === "National") {
+                        // if (d.state === "National" || d.state === "Oklahoma" || d.state === "Michigan" || d.state === "Indiana") {
+                        return "black"
+                    } else {
+                        return "lightgrey"
+                    }
+                })
+                .style("stroke-width", function(d) {
+                    if (d.state === "National") {
+                        // if (d.state === "National" || d.state === "Oklahoma" || d.state === "Michigan" || d.state === "Indiana") {
+                        return 2
+                    } else {
+                        return .5
+                    }
+                })
+
+        })
+
+
+        // ************ add state name *****************
+
+        var state = graphic.selectAll(".text")
+            .data(data[0].values)
+            .enter().append("text")
+            .attr("class", "text")
+            .text(function(d) {
+                return d.state;
+            })
+            .attr("x", function(d) {
+                return x(d.poor);
+            })
+            .attr("y", function(d) {
+                return y(d.core);
+            })
+            .attr("font-size", "12px")
+            .attr("font-family", "sans-serif")
+            .style("fill", "black")
+            .style("text-anchor", "middle")
+            .attr("dy", "-1.2em")
+            .attr("display", function(d) {
+                if (d.state === "National") {
+                    // if (d.state === "National" || d.state === "Oklahoma" || d.state === "Michigan" || d.state === "Indiana") {
+                    return "inherit"
+                } else {
+                    return "none"
+                }
+            })
+
+        // *********** add path for each state***********
+
+        var line = d3.svg.line()
+            .x(function(d) {
+                return x(d.poor);
+            })
+            .y(function(d) {
+                return y(d.core);
+            });
+
+
+        // ***************** add reveal logo ****************
+        graphic.append("svg:image")
+            .attr("x", 5)
+            .attr("y", 410)
+            .attr("width", 120)
+            .attr("height", 30)
+            .attr("xlink:href", "reveal-logo.png")
+
+        // ************ add year ***************
+
+        // graphic.append("text")
+        //     .attr("id", "current_year")
+        //     .text(data[0].key)
+        //     .attr("x", x(0.298))
+        //     .attr("y", y(1.03))
+        //     .attr("text-anchor", "end")
+        //     .style("font-size", 20)
+        //     .style("fill", "black")
+        //     .style("font-family", "Roboto")
+        //     .style("font-weight", 700)
+
+        // *************** play button **************
+
+        var play = d3.select("#play_button")
+            .append("svg")
+            .attr("width", 300)
+            .attr("height", 30)
+            .append("g")
+            .attr("class", "play")
+            .on("mousedown", function() {
+                play.classed("mousedown", true);
+                play.on("mouseup", function() {
+                    play.classed("mousedown", false);
+                });
+            })
+            .on("click", function() {
+                current_year = 1997;
+                graphic.selectAll(".selected_state_path")
+                    .remove()
+                transition_by_year()
+            })
+            .attr("cursor", "pointer")
+
+        play.append("circle")
+            .attr("r", 12)
+            .attr("transform", "translate(200,15)");
+
+        play.append("path")
+            .attr("d", "M-22,-30l60,30l-60,30z")
+            .attr("transform", "translate(200,15)scale(.2)");
+
+
+
+        // ************************************************************************ all the functions needed for animation **********************************************************
+        
+        function draw_path_by_one_year(current_year) {
+
+            var selected_state_path = graphic.append('path')
+                .datum(dataAll.filter(function(d, i) {
+                    if (d.state === selectedState & (d.year === String(current_year - 1) || d.year === String(current_year))) {
+                        return d;
+                    }
+                }))
+                .attr("class", "selected_state_path")
+                .attr("d", line)
+                .style("stroke", "black")
+                .style("fill", "none")
+                .style("stroke-dasharray", "2,2")
+                .attr('marker-end', 'url(#state_point)')
+        }
+
+
+        function transition_module(current_year) {
+
+            var data = dataAll.filter(function(d, i) {
+                if (d.year === String(current_year)) {
+                    return d;
+                }
+            });
+
+            data = data.map(function(d) {
+                return {
+                    state: d.state,
+                    year: d.year,
+                    core: +d.core,
+                    poor: +d.poor
+                };
+            });
+
+            data = d3.nest().key(function(d) {
+                return d.year;
+            }).entries(data);
+
+
+            graphic.selectAll(".dot")
+                .data(data[0].values)
+                .transition()
+                .duration(500)
+                .attr("cx", function(d) {
+                    return x(d.poor);
+                })
+                .attr("cy", function(d) {
+                    return y(d.core);
+                })
+
+            graphic.selectAll(".text")
+                .data(data[0].values)
+                .transition()
+                .duration(500)
+                .attr("x", function(d) {
+                    return x(d.poor);
+                })
+                .attr("y", function(d) {
+                    return y(d.core);
+                })
+
+            graphic.select("#below_national")
+                .datum(dataAll.filter(function(d, i) {
+                    if (d.state === "National" & d.year === String(current_year)) {
+                        return d;
+                    }
+                }))
+                .transition()
+                .duration(500)
+                .attr("x", function(d) {
+                    return x(d[0].poor)
+                })
+                .attr("y", function(d) {
+                    return y(d[0].core)
+                })
+                .attr("width", function(d) {
+                    return x(0.3) - x(d[0].poor)
+                })
+                .attr("height", function(d) {
+                    return y(1.09 - d[0].core)
+                })
+
+
+        }
+
+        var current_year = 1997;
+
+
+        function transition_by_year() {
+
+            var transition = d3.transition()
+                .duration(1000)
+                .each("start", function start() {
+
+                    setValue(current_year);
+                    transition_module(current_year)
+                    draw_path_by_one_year(current_year)
+
+                    if (current_year !== 2014) {
+                        current_year = current_year + 1;
+                        transition = transition.transition().each("start", start);
+                    }
+
+                //     if (current_year !== 2015) {
+                //         transition = transition.transition().each("start", start);     
+                //     }
+
+                })
+
+        }
+
+        function setValue(current_year) {
+            $('#slider').slider('value', current_year)
+            $("#year").val($("#slider").slider("value"));
+        }
+
+        $(function() {
+
+            // ********** initiate the slider *************
+            $("#slider").slider({
+                range: "min",
+                value: 1997,
+                min: 1997,
+                max: 2014,
+                slide: function(event, ui) {
+                    $("#year").val(ui.value);
+                }
+            });
+            $("#year").val($("#slider").slider("value"));
+
+
+            // ************ get the previous year **************
+            var start_year = ''
+
+            $("#slider").slider({
+                start: function(event, ui) {
+                    start_year = ui.value;
+
+                }
+            });
+
+            // ************ get the selected year **************
+
+            $("#slider").slider({
+                change: function(event, ui) {
+                    var selected_year = ui.value
+
+                    transition_module(selected_year)
+
+                //     graphic.append('path')
+                //         .datum(dataAll.filter(function(d, i) {
+                //             if (d.state === selectedState) {
+                //                 return d;
+                //             }
+                //         }))
+                //         .attr("class", "selected_state_path")
+                //         .attr("d", line)
+                //         .style("stroke", "black")
+                //         .style("fill", "none")
+                //         .style("stroke-dasharray", "2,2")
+                //         .attr('marker-end', 'url(#state_point)')
+                //         .attr('marker-start', 'url(#state_point)')
+                }
+
+            });
+
+
+
+
+
+        });
+
+
+
+        graphic.append('marker')
+            .attr('id', 'state_point')
+            .attr('viewBox', '-10 -10 20 20')
+            .attr('markerWidth', 10)
+            .attr('markerHeight', 10)
+            .attr('orient', 'auto')
+            .append('circle')
+            .attr('r', 5)
+
+        var selectedState = ''
+
+        // ********** switch between different states ************
+        function menuChanged() {
+
+            selectedState = d3.event.target.value;
+
+            graphic.selectAll(".selected_state_path")
+                .remove()
+
+            graphic.selectAll(".dot")
+                .data(data[0].values)
+                .transition()
+                .duration(50)
+                .style("stroke", function(d) {
+                    if (d.state === "National" || d.state === selectedState) {
+                        // if (d.state === "National" || d.state === "Oklahoma" || d.state === "Michigan" || d.state === "Indiana") {
+                        return "black"
+                    } else {
+                        return "lightgrey"
+                    }
+                })
+                .style("stroke-width", function(d) {
+                    if (d.state === "National" || d.state === selectedState) {
+                        // if (d.state === "National" || d.state === "Oklahoma" || d.state === "Michigan" || d.state === "Indiana") {
+                        return 2
+                    } else {
+                        return .5
+                    }
+                })
+                .style("fill", function(d) {
+                    if (d.state === "National" || d.state === selectedState) {
+                        // if (d.state === "National" || d.state === "Oklahoma" || d.state === "Michigan" || d.state === "Indiana") {
+                        return "black"
+                    } else {
+                        return "#FF715B"
+                    }
+                })
+                .style("opacity", function(d) {
+                    if (d.state === selectedState) {
+                        return 1
+                    } else {
+                        return 0.8
+                    }
+
+                })
+
+            graphic.selectAll(".text")
+                .data(data[0].values)
+                .transition()
+                .duration(50)
+                .attr("display", function(d) {
+                    if (d.state === "National" || d.state === selectedState) {
+                        // if (d.state === "National" || d.state === "Oklahoma" || d.state === "Michigan" || d.state === "Indiana") {
+                        return "inherit"
+                    } else {
+                        return "none"
+                    }
+                })
+
+
+
+
+        }
+
+
+        // ********* responsive function **************
+
+        d3.select(window).on('resize', resize);
+
+        function resize() {
+            // update width
+
+            windowWidth = $(document).width()
+
+            width = parseInt(d3.select('#graphic_container').style('width'), 10);
+            width = width - margin.left - margin.right;
+            height = parseInt(d3.select("#graphic_container").style("height")) - margin.top - margin.bottom;
+
+            d3.selectAll('svg')
+                .attr("width", width + margin.left + margin.right)
+
+            // reset the chart
+            x.range([0, width]);
+            y.range([height, 0]);
+            graphic.select('.x.axis')
+                .attr("transform", "translate(0," + height + ")")
+                .call(xAxis);
+
+            graphic.select('.y.axis')
+                .call(yAxis);
+
+            yAxis.tickSize(-width);
+
+
+            graphic.selectAll('.dot')
+                .attr("cx", function(d) {
+                    return x(d.poor);
+                })
+                .attr("cy", function(d) {
+                    return y(d.core);
+                })
+
+            graphic.selectAll(".text")
+                .attr("x", function(d) {
+                    return x(d.poor);
+                })
+                .attr("y", function(d) {
+                    return y(d.core);
+                })
+
+            graphic.select("#xlabel")
+                .attr("x", x(0.3))
+
+            graphic.selectAll(".selected_state_path")
+                .datum(dataAll.filter(function(d, i) {
+                    if (d.state === selectedState) {
+                        return d;
+                    }
+                }))
+                .attr("d", line)
+                .attr('marker-start', 'url(#state_point)')
+
+
+            graphic.select("#below_national")
+                .datum(dataAll.filter(function(d, i) {
+                    if (d.state === "National" & d.year === String(current_year)) {
+                        return d;
+                    }
+                }))
+                .attr("x", function(d) {
+                    return x(d[0].poor)
+                })
+                .attr("y", function(d) {
+                    return y(d[0].core)
+                })
+                .attr("width", function(d) {
+                    return x(0.3) - x(d[0].poor)
+                })
+                .attr("height", function(d) {
+                    return y(1.09 - d[0].core)
+                })
+
+            swoopySel_bk.selectAll('g').attr("transform", function(d) {
+                return "translate(" + x(d.xVal) + "," + y(d.yVal) + ")"
+            })
+
+
+
+
+        }
+
+
+
+    })
+    </script>

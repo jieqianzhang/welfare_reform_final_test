@@ -1,0 +1,244 @@
+body {
+    font: 10px "Robot" sans-serif;
+}
+
+#intro h2{
+  font-family: "Robot" sans-serif;
+  font-weight: 400;
+}
+
+
+#intro h5{
+  font-family: "Robot" sans-serif;
+  font-weight: 400;
+}
+
+#graphic_container{
+    width: 100%;
+}
+
+#footnote h6{
+  color: darkgrey;
+  font-family: "Robot" sans-serif;
+  font-weight: 400;
+  padding-top: 0px;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: lightgrey;
+    shape-rendering: crispEdges;
+    stroke-dasharray: 2, 2;
+}
+
+.axis text {
+    font-size: 10px;
+}
+
+.dot {
+    stroke: #000;
+}
+
+
+/*annotations css*/
+
+.annotations path {
+    fill: none;
+    stroke: black;
+    stroke-width: 1px;
+/*    opacity: 0*/
+}
+
+.annotations text {
+    fill: black;
+    font-size: 12px;
+/*    opacity: 0*/
+}
+
+.annotations_bk path{
+    fill: grey;
+    stroke: grey;
+    stroke-width: 2px;
+}
+
+#arrow{
+  fill: grey;
+}
+
+.annotations_bk text {
+        font-size: 16px;
+        font-family: 'Open Sans', sans-serif;
+        fill: grey;
+        opacity: 1;
+    }
+  
+
+
+/******** dropdown menu styling ***********/
+
+#dropdown_div {
+    margin-left: 60px;
+}
+
+.dropdown-toggle {
+    background-color: white;
+    color: black;
+    line-height: 10px;
+}
+
+#dropdown a:hover {
+    fill: #FF715B;
+}
+
+#dropdown {
+    background-color: white;
+    border: grey 1px solid;
+    font-size: 12px;
+    outline: none;
+    height: 30px;
+    /*margin-top: 20px;*/
+    /*  top: 120px;
+    left: 150px;*/
+}
+
+
+/******** play button styling ***********/
+
+.play circle {
+    fill: white;
+    stroke: black;
+    stroke-width: 3px;
+}
+
+.play:hover path {
+    fill: #FF715B;
+}
+
+.play.mousedown circle {
+    fill: #FF715B;
+}
+
+.play.mousedown path {
+    fill: white;
+}
+
+#play_button{
+  z-index: 9999999;
+}
+
+/***********slider styling**************/
+
+#slider_container{
+  margin-left: 60px;
+  margin-bottom: 10px;
+  margin-right: 20px;
+}
+
+#year{
+  font-size: 20px !important;
+  color: black !important;
+  text-align: end !important;
+  width: 100% !important;
+}
+
+.d3slider text {
+  font: 12px sans-serif;
+}
+
+.tick.minor text {
+  display: none;
+}
+
+.tick line {
+  stroke-width: 1;
+}
+.tick.minor line {
+  stroke-width: 1;
+  stroke: #bbb;
+}
+
+.dragger rect {
+  fill: #71ACE3;
+  stroke: none;
+  z-index: 3;
+}
+
+.dragger line {
+  stroke: #aa0000;
+  fill: none;
+}
+
+.dragger-outer {
+  fill: #fff;
+  stroke: darkgrey;
+}
+
+.dragger-inner {
+  fill:  #FF715B;
+  stroke: none;
+  r: 5px;
+}
+
+.min-marker line {
+  stroke: #aa0000;
+  fill: none;
+}
+
+.overlay {
+  fill: none;
+  pointer-events: all;
+  z-index: 1;
+}
+
+#intro{
+  margin-bottom:  40px;
+}
+
+@media screen and (min-width: 768px) {
+
+#intro h2{
+  padding-left: 60px;
+  padding-right: 60px;
+}
+
+#intro h5{
+  padding-left: 60px;
+  padding-right: 60px;
+}
+
+#footnote h6{
+  padding-left: 60px;
+  padding-right: 60px;
+}
+
+}
+
+@media screen and (max-width: 767px) {
+
+#intro h2{
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+#intro h5{
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+#footnote h6{
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+
+}
+
+
+
+
+
+
+
+
+</style>
