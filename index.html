@@ -13,27 +13,27 @@
 </head>
 
 <body>
-    <div id="intro">
+   <!--  <div id="intro">
         <h2>How each state has spent their TANF money since welfare reform</h2>
         <h5>By Jieqian Zhang</h5>
         <h5>Two decades after the new welfare reform, 45 states are spending less share of welfare money on basic assistance, like  cash welfare, child care and work-related assistance, to help poor families out of difficulites. Meanwhile, most of the states have more families with children living under poverty line every one hundred families. </h5>
         <h5>Select a state and click play button, to see how the poverty rate and amount of basic assistance has changed since 1997.</h5>
-    </div>
-    <div id="welfareScatterplotContainer">
-    <div>
-        <div id="dropdown_div"></div>
-        <div id="play_button"></div>
-    </div>
-    <div id="slider_container">
-        <input type="text" id="year" readonly style="border:0; color:#f6931f; font-weight:bold;">
-        <div id="slider"></div>
-    </div>
-    <div id="graphic_container"></div>
-    <div id="footnote">
-        <h6>Data: Census' Current Population Survey data and the Department of Health and Human Services(HSS) data, analysed by Center on Budget and Policy Priorities(CBPP)</h6>
-        <h6>Note: CBPP uses two-year averages of the families in poverty data to improve the reliability of the data at state level. The family poverty data is the two-year averages of the current year and the previous year.</h6>
-    </div>
-    </div>
+    </div> -->
+ <!--    <div id="welfareScatterplotContainer"> -->
+        <div>
+            <div id="dropdown_div"></div>
+            <div id="play_button"></div>
+        </div>
+        <div id="slider_container">
+            <input type="text" id="year" readonly style="border:0; color:#f6931f; font-weight:bold;">
+            <div id="slider"></div>
+        </div>
+        <div id="graphic_container"></div>
+        <div id="footnote">
+            <h6>Data: Census' Current Population Survey data and the Department of Health and Human Services(HSS) data, analysed by Center on Budget and Policy Priorities(CBPP)</h6>
+            <h6>Note: CBPP uses two-year averages of the families in poverty data to improve the reliability of the data at state level. The family poverty data is the two-year averages of the current year and the previous year.</h6>
+        </div>
+ <!--    </div> -->
     <script src="//d3js.org/d3.v3.min.js"></script>
     <script src="swoopy-drag.js"></script>
     <script src="jquery-ui.js"></script>
@@ -488,7 +488,7 @@
 
 
         // ************************************************************************ all the functions needed for animation **********************************************************
-        
+
         function draw_path_by_one_year(current_year) {
 
             var selected_state_path = graphic.append('path')
@@ -592,9 +592,9 @@
                         transition = transition.transition().each("start", start);
                     }
 
-                //     if (current_year !== 2015) {
-                //         transition = transition.transition().each("start", start);     
-                //     }
+                    //     if (current_year !== 2015) {
+                    //         transition = transition.transition().each("start", start);     
+                    //     }
 
                 })
 
@@ -638,19 +638,19 @@
 
                     transition_module(selected_year)
 
-                //     graphic.append('path')
-                //         .datum(dataAll.filter(function(d, i) {
-                //             if (d.state === selectedState) {
-                //                 return d;
-                //             }
-                //         }))
-                //         .attr("class", "selected_state_path")
-                //         .attr("d", line)
-                //         .style("stroke", "black")
-                //         .style("fill", "none")
-                //         .style("stroke-dasharray", "2,2")
-                //         .attr('marker-end', 'url(#state_point)')
-                //         .attr('marker-start', 'url(#state_point)')
+                    //     graphic.append('path')
+                    //         .datum(dataAll.filter(function(d, i) {
+                    //             if (d.state === selectedState) {
+                    //                 return d;
+                    //             }
+                    //         }))
+                    //         .attr("class", "selected_state_path")
+                    //         .attr("d", line)
+                    //         .style("stroke", "black")
+                    //         .style("fill", "none")
+                    //         .style("stroke-dasharray", "2,2")
+                    //         .attr('marker-end', 'url(#state_point)')
+                    //         .attr('marker-start', 'url(#state_point)')
                 }
 
             });
@@ -826,5 +826,10 @@
 
 
 
+    })
+
+    $(document).ready(function(){
+
+        new pym.Child();
     })
     </script>
