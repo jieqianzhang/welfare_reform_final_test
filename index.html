@@ -27,7 +27,9 @@
     </div>
     <div id="slider_container">
         <input type="text" id="year" readonly style="border:0; color:#f6931f; font-weight:bold;">
+        <div id="minus_container"><span id="minus">-</span></div>
         <div id="slider"></div>
+        <div id="plus_container"><span id="plus">+</span></div>
     </div>
     <div style="float:left; margin-left: 50px; margin-top: 10px">
         <svg width="15px" height="15px" viewBox="0 0 15 15" style="float:left">
@@ -36,7 +38,6 @@
         <h6 style="margin-top: 0px; margin-bottom: 0px; margin-left: 20px">States inside the shaded area are worse than the nationwide level.</h6>
     </div>
     <div style="float:left">
-        
     </div>
     <div id="graphic_container"></div>
     <div id="footnote">
@@ -654,6 +655,19 @@
 
 
 
+        });
+
+
+        $('#plus_container').click(function() {
+            var sliderCurrentValue = $("#slider").slider("option", "value");
+            $('#slider').slider('value', sliderCurrentValue+1)
+            $("#year").val($("#slider").slider("value"));
+        });
+
+        $('#minus_container').click(function() {
+            var sliderCurrentValue = $("#slider").slider("option", "value");
+            $('#slider').slider('value', sliderCurrentValue-1)
+            $("#year").val($("#slider").slider("value"));
         });
 
 
