@@ -21,7 +21,7 @@
         <h5>Select a state and click play button, to see how the poverty rate and amount of basic assistance has changed since 1997.</h5>
     </div> -->
     <!--    <div id="welfareScatterplotContainer"> -->
-    <div>
+    <div style="padding-top:10px">
         <div id="dropdown_div"></div>
         <div id="play_button"></div>
     </div>
@@ -29,7 +29,7 @@
         <input type="text" id="year" readonly style="border:0; color:#f6931f; font-weight:bold;">
         <div id="slider"></div>
     </div>
-    <div style="float:left; margin-left: 50px">
+    <div style="float:left; margin-left: 50px; margin-top: 10px">
         <svg width="15px" height="15px" viewBox="0 0 15 15" style="float:left">
             <rect x="0" y="0" width="15" height="15" fill="url(#diagonalHatch)" />
         </svg>
@@ -455,7 +455,7 @@
         var play = d3.select("#play_button")
             .append("svg")
             .attr("width", 300)
-            .attr("height", 30)
+            .attr("height", 34)
             .append("g")
             .attr("class", "play")
             .on("mousedown", function() {
@@ -473,12 +473,12 @@
             .attr("cursor", "pointer")
 
         play.append("circle")
-            .attr("r", 12)
-            .attr("transform", "translate(200,15)");
+            .attr("r", 15)
+            .attr("transform", "translate(210,17)");
 
         play.append("path")
             .attr("d", "M-22,-30l60,30l-60,30z")
-            .attr("transform", "translate(200,15)scale(.2)");
+            .attr("transform", "translate(210,17)scale(.25)");
 
 
 
