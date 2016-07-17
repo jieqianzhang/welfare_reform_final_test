@@ -78,7 +78,7 @@ body {
 /******** dropdown menu styling ***********/
 
 #dropdown_div {
-    margin-left: 60px;
+    margin-left: 50px;
 }
 
 .dropdown-toggle {
@@ -130,7 +130,7 @@ body {
 /***********slider styling**************/
 
 #slider_container{
-  margin-left: 60px;
+  margin-left: 55px;
   margin-bottom: 10px;
   margin-right: 20px;
 }
@@ -212,6 +212,18 @@ body {
   padding-right: 60px;
 }
 
+#xlabel{
+  font-size: 12px; 
+}
+
+#ylabel{
+  font-size: 12px; 
+}
+
+#squarelabel{
+  font-size: 12px; 
+}
+
 }
 
 @media screen and (max-width: 767px) {
@@ -229,6 +241,18 @@ body {
 #footnote h6{
   padding-left: 30px;
   padding-right: 30px;
+}
+
+#xlabel{
+  font-size: 11px; 
+}
+
+#ylabel{
+  font-size: 11px; 
+}
+
+#squarelabel{
+  font-size: 11px; 
 }
 
 
