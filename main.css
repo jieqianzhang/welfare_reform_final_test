@@ -145,10 +145,8 @@ body {
   width: 20px;
   height:20px;
   background-color: white; 
-  border-radius: 5px;
-  border: 1px solid lightgrey;
   float:left;
-  margin-top: -4px;
+  margin-top: -5px;
   cursor:pointer;
   margin-left: -5px;
 
@@ -156,22 +154,19 @@ body {
 
 #minus{
   color: black;
-  font-size: 26px;
-  padding-top: 0px;
-  line-height: 16px;
-  padding-left: 4px;
+  font-size: 20px;
+  line-height: 20px;
   cursor:pointer;
   color: grey;
-
-
+  text-align: center;
+  vertical-align: middle;
+  height:50%;
 }
 
 #plus_container{
   width: 20px;
   height:20px;
   background-color: white; 
-  border-radius: 5px;
-  border: 1px solid lightgrey;
   float:right;
   margin-top: -15px;
   margin-right: -30px;
@@ -182,11 +177,14 @@ body {
 #plus{
   color: black;
   font-size: 20px;
-  padding-top: 0px;
-  line-height: 14px;
-  padding-left: 3px;
+  line-height: 20px;
   cursor:pointer;
   color: grey;
+  text-align: center;
+  vertical-align: middle;
+  margin: 0 0;
+  
+  
 
 
 }
