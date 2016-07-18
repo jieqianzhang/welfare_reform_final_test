@@ -59,7 +59,7 @@
             left: 50
         },
         width = windowWidth - margin.left - margin.right,
-        height = width * 0.9 - margin.top - margin.bottom;
+        height = width - margin.top - margin.bottom;
 
     var x = d3.scale.linear()
         .range([0, width]);
@@ -195,7 +195,7 @@
             .attr("y", -35)
             .attr("x", 0)
             .style("text-anchor", "end")
-            .text("% of core spending among total spending")
+            .text("% of total spending that is core spending")
             // .style("font-size", 12)
             .style("font-weight", 400)
 
@@ -328,7 +328,14 @@
             .attr("cy", function(d) {
                 return y(d.core);
             })
-            .style("opacity", .8)
+            .style("opacity", function(d) {
+                if (d.state === "National") {
+                    // if (d.state === "National" || d.state === "Oklahoma" || d.state === "Michigan" || d.state === "Indiana") {
+                    return 1
+                } else {
+                    return 0.8
+                }
+            })
             .style("stroke", function(d) {
                 if (d.state === "National") {
                     // if (d.state === "National" || d.state === "Oklahoma" || d.state === "Michigan" || d.state === "Indiana") {
@@ -347,7 +354,7 @@
             })
             .attr("fill", function(d) {
                 if (d.state === "National") {
-                    return "black"
+                    return "lightgrey"
                 } else {
                     return "#FF715B"
                 }
@@ -712,7 +719,10 @@
                     }
                 })
                 .style("fill", function(d) {
-                    if (d.state === "National" || d.state === selectedState) {
+                    if (d.state === "National"){
+
+                        return "lightgrey"
+                    } else if (d.state === selectedState) {
                         // if (d.state === "National" || d.state === "Oklahoma" || d.state === "Michigan" || d.state === "Indiana") {
                         return "black"
                     } else {
@@ -720,7 +730,7 @@
                     }
                 })
                 .style("opacity", function(d) {
-                    if (d.state === selectedState) {
+                    if (d.state === selectedState || d.state === "National") {
                         return 1
                     } else {
                         return 0.8
@@ -759,7 +769,7 @@
             width = parseInt(d3.select('#graphic_container').style('width'), 10);
             width = width - margin.left - margin.right;
             height = parseInt(d3.select("#graphic_container").style("height")) - margin.top - margin.bottom;
-            height = width * 0.8 - margin.top - margin.bottom;
+            height = width - margin.top - margin.bottom;
 
 
             d3.select("#graphic_container").select("svg")
