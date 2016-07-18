@@ -40,6 +40,18 @@ body {
     stroke: #000;
 }
 
+#xlabel{
+  font-size: 12px; 
+}
+
+#ylabel{
+  font-size: 12px; 
+}
+
+#squarelabel{
+  font-size: 12px; 
+}
+
 
 
 /*annotations css*/
@@ -79,7 +91,7 @@ body {
 /******** dropdown menu styling ***********/
 
 #dropdown_div {
-    margin-left: 50px;
+    margin-left: 10px;
 }
 
 .dropdown-toggle {
@@ -180,10 +192,10 @@ body {
 }
 
 #slider_container{
-  margin-left: 55px;
+  margin-left: 15px;
   margin-bottom: 10px;
   margin-right: 20px;
-  width: 70%;
+  width: 90%;
   float:left;
   height: 50px;
 }
@@ -271,17 +283,7 @@ body {
   padding-right: 60px;
 }
 
-#xlabel{
-  font-size: 12px; 
-}
 
-#ylabel{
-  font-size: 12px; 
-}
-
-#squarelabel{
-  font-size: 12px; 
-}
 
 
 }
@@ -303,17 +305,6 @@ body {
   padding-right: 30px;
 }
 
-#xlabel{
-  font-size: 11px; 
-}
-
-#ylabel{
-  font-size: 11px; 
-}
-
-#squarelabel{
-  font-size: 11px; 
-}
 
 }
 
@@ -328,6 +319,18 @@ body {
 
 .text{
   text-shadow: 0px 2px 3px lightgrey;
+}
+
+#xlabel{
+  font-size: 11px; 
+}
+
+#ylabel{
+  font-size: 11px; 
+}
+
+#squarelabel{
+  font-size: 11px; 
 }
 
 }

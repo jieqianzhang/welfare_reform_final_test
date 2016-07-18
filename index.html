@@ -31,7 +31,7 @@
         <div id="slider"></div>
         <div id="plus_container"><span id="plus">+</span></div>
     </div>
-    <div style="float:left; margin-left: 50px; margin-top: 10px">
+    <div style="float:left; margin-left: 10px; margin-top: 10px">
         <svg width="15px" height="15px" viewBox="0 0 15 15" style="float:left">
             <rect x="0" y="0" width="15" height="15" fill="url(#diagonalHatch)" />
         </svg>
@@ -482,11 +482,11 @@
 
         play.append("circle")
             .attr("r", 15)
-            .attr("transform", "translate(210,17)");
+            .attr("transform", "translate(170,17)");
 
         play.append("path")
             .attr("d", "M-22,-30l60,30l-60,30z")
-            .attr("transform", "translate(210,17)scale(.25)");
+            .attr("transform", "translate(170,17)scale(.25)");
 
 
 
@@ -667,13 +667,13 @@
 
         $('#plus_container').click(function() {
             var sliderCurrentValue = $("#slider").slider("option", "value");
-            $('#slider').slider('value', sliderCurrentValue+1)
+            $('#slider').slider('value', sliderCurrentValue + 1)
             $("#year").val($("#slider").slider("value"));
         });
 
         $('#minus_container').click(function() {
             var sliderCurrentValue = $("#slider").slider("option", "value");
-            $('#slider').slider('value', sliderCurrentValue-1)
+            $('#slider').slider('value', sliderCurrentValue - 1)
             $("#year").val($("#slider").slider("value"));
         });
 
@@ -690,11 +690,17 @@
 
         var selectedState = ''
 
+         d3.selection.prototype.moveToFront = function() {
+                return this.each(function() {
+                    this.parentNode.appendChild(this);
+                });
+            };
+
         // ********** switch between different states ************
         function menuChanged() {
 
             selectedState = d3.event.target.value;
-
+           
             graphic.selectAll(".selected_state_path")
                 .remove()
 
@@ -719,7 +725,7 @@
                     }
                 })
                 .style("fill", function(d) {
-                    if (d.state === "National"){
+                    if (d.state === "National") {
 
                         return "lightgrey"
                     } else if (d.state === selectedState) {
